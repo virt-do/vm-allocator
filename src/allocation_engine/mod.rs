@@ -4,5 +4,6 @@
 
 mod interval_tree;
 
+pub use interval_tree::InnerNode;
 pub(crate) use interval_tree::IntervalTree;
 pub use interval_tree::NodeState;

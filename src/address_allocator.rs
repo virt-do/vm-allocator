@@ -8,7 +8,7 @@
 //! This module implements an allocation strategies for memory slots in an
 //! address space (for example MMIO and PIO).
 
-use crate::allocation_engine::{IntervalTree, NodeState};
+use crate::allocation_engine::{InnerNode, IntervalTree, NodeState};
 use crate::{AllocPolicy, Constraint, Error, RangeInclusive, Result};
 
 // Internal representation of AddressAllocator. Contains the managed address
@@ -71,6 +71,11 @@ impl AddressAllocator {
     /// the node was not allocated before.
     pub fn free(&mut self, key: &RangeInclusive) -> Result<()> {
         self.interval_tree.free(key)
+    }
+
+    /// Get all the allocated memory slots.
+    pub fn allocated_slots(&self) -> Vec<&InnerNode> {
+        self.interval_tree.allocated_slots()
     }
 }
 

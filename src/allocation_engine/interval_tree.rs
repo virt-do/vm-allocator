@@ -62,7 +62,7 @@ impl NodeState {
 
 /// Internal tree node to implement interval tree.
 #[derive(Clone, Debug, PartialEq, PartialOrd, Eq, Ord)]
-pub(crate) struct InnerNode {
+pub struct InnerNode {
     /// Interval handled by this node.
     key: RangeInclusive,
     /// NodeState, can be Free or Allocated.
@@ -85,6 +85,21 @@ impl InnerNode {
             right: None,
             height: 1,
         }
+    }
+
+    /// Returns all the allocated nodes in the tree.
+    fn allocated_nodes(&self) -> Vec<&InnerNode> {
+        let mut allocated_nodes = Vec::new();
+        if self.node_state != NodeState::Free {
+            allocated_nodes.push(self);
+        }
+        if let Some(left) = &self.left {
+            allocated_nodes.extend(left.allocated_nodes());
+        }
+        if let Some(right) = &self.right {
+            allocated_nodes.extend(right.allocated_nodes());
+        }
+        allocated_nodes
     }
 
     /// Returns a readonly reference to the node associated with the `key` or
@@ -658,6 +673,12 @@ impl IntervalTree {
         // Insert in the tree the new created range.
         self.insert(range, NodeState::Free)?;
         Ok(())
+    }
+
+    pub fn allocated_slots(&self) -> Vec<&InnerNode> {
+        self.root
+            .as_ref()
+            .map_or(vec![], |root| root.allocated_nodes())
     }
 }
 
