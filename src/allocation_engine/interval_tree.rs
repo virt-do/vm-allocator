@@ -88,7 +88,7 @@ impl InnerNode {
     }
 
     /// Returns all the allocated nodes in the tree.
-    fn allocated_nodes(&self) -> Vec<&InnerNode> {
+    pub fn allocated_nodes(&self) -> Vec<&InnerNode> {
         let mut allocated_nodes = Vec::new();
         if self.node_state != NodeState::Free {
             allocated_nodes.push(self);
@@ -100,6 +100,15 @@ impl InnerNode {
             allocated_nodes.extend(right.allocated_nodes());
         }
         allocated_nodes
+    }
+
+    /// Returns the key of the node.
+    pub fn key(&self) -> &RangeInclusive {
+        &self.key
+    }
+
+    pub fn node_state(&self) -> NodeState {
+        self.node_state
     }
 
     /// Returns a readonly reference to the node associated with the `key` or
