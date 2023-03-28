@@ -15,7 +15,7 @@
 //! ```rust
 //! use std::collections::HashMap;
 //! use std::process::id;
-//! use vm_allocator::{AddressAllocator, AllocPolicy, Error, IdAllocator, RangeInclusive, Result};
+//! use vm_allocator::{AddressAllocator, AllocPolicy, NodeState, Error, IdAllocator, RangeInclusive, Result};
 //!
 //! const FIRST_ADDR_PAST_32BITS: u64 = 1 << 32;
 //! const MEM_32BIT_GAP_SIZE: u64 = 768 << 20;
@@ -48,7 +48,7 @@
 //!         // For each device we reserve one page of addresses.
 //!         let mmio_range =
 //!             self.mmio_allocator
-//!                 .allocate(PAGE_SIZE, PAGE_SIZE, AllocPolicy::FirstMatch)?;
+//!                 .allocate(PAGE_SIZE, PAGE_SIZE, AllocPolicy::FirstMatch, NodeState::Mmio)?;
 //!         let slot = DeviceSlot {
 //!             id: self.id_allocator.allocate_id()?,
 //!             mmio_range,
@@ -82,7 +82,7 @@ mod id_allocator;
 use std::{cmp::max, cmp::min, result};
 use thiserror::Error;
 
-use crate::allocation_engine::NodeState;
+pub use crate::allocation_engine::NodeState;
 pub use crate::{address_allocator::AddressAllocator, id_allocator::IdAllocator};
 
 /// Default alignment that can be used for creating a `Constraint`.
